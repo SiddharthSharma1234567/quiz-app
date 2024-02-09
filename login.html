@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f3f3f3; /* Set background color */
+    }
+
+    .container {
+      width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .container form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container form label {
+      margin-bottom: 10px;
+    }
+
+    .container form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .container form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .container form button:hover {
+      background-color: #45a049;
+    }
+
+    .container form .signup-link {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .container form .signup-link a {
+      color: #007bff; /* Set link color */
+      text-decoration: none;
+    }
+
+    .container form .signup-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form action="/logindata" method="post">
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" placeholder="Enter your email" required />
+
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" placeholder="Enter your password" required />
+
+      <p id="error-message" style="color: red; font-weight: bold"></p>
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="signup-link">
+      <span>Don't have an account? </span>
+      <a href="/signup">Create new account</a>
+    </div>
+  </div>
+
+  <script>
+    document
+      .querySelector("form")
+      .addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const email = formData.get("email");
+        const password = formData.get("password");
+
+        document.getElementById("email").value="";
+        document.getElementById("password").value="";
+
+
+        fetch("/logindata", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({"email":email,
+          "password":password}),
+        })
+          .then((response) => response.json())
+          .then((responseData) => {
+            if (responseData.success) {
+              window.location.href = "/";
+            } else if (!responseData.success) {
+              document.getElementById("error-message").innerText =
+                responseData.error;
+
+                setTimeout(() => {
+                  document.getElementById("error-message").innerText = "";
+                }, 2000);
+            }
+          });
+      });
+  </script>
+</body>
+</html>
